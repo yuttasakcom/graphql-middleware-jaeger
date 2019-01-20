@@ -1,0 +1,28 @@
+{
+  "name": "graphql-middleware-jaeger",
+  "version": "0.0.1",
+  "description": "GraphQL Jaeger tracing middleware based on OpenCensus",
+  "main": "build/index.js",
+  "repository": "https://github.com/BrunoScheufler/graphql-middleware-jaeger",
+  "author": "Bruno Scheufler",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "@types/graphql": "^14.0.5",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.18",
+    "tslint": "^5.12.1",
+    "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "@opencensus/core": "^0.0.8",
+    "@opencensus/exporter-jaeger": "^0.0.8",
+    "@opencensus/nodejs": "^0.0.8",
+    "graphql-middleware": "^3.0.0"
+  },
+  "scripts": {
+    "build": "tsc --project .",
+    "lint": "tslint --project .",
+    "prepare": "yarn build && yarn lint"
+  }
+}
