@@ -64,3 +64,7 @@ You can configure the OpenCensus tracer, as well as the Jaeger exporter. For mor
 Since there's contextual data that you might want to add to your span, this middleware allows you to define a number of hooks triggered at specific execution points. An example of the usage of hooks is included in the example code above.
 
 Available hooks are: `preResolve`, `postResolve`, `resolveError`
+
+## more resources
+
+- [Introduction of this package](https://brunoscheufler.com/blog/2019-01-20-introducing-graphql-middleware-jaeger)
