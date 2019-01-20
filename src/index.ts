@@ -36,7 +36,12 @@ const runHook = async <T>(
   name: string,
   hookFnContext: IHookFnContext<T>
 ) => {
-  const hook = hooks[name] || {};
+  const hook = hooks[name];
+
+  if (!Array.isArray(hook)) {
+    return;
+  }
+
   for (const hookFn of hook) {
     await hookFn.apply(null, [hookFnContext]);
   }
@@ -55,6 +60,7 @@ export const graphqlJaegerMiddleware: <T = any>(
   // Return middleware
   return (resolve, parent, args, context, info) => {
     // Add tracer to context
+    context.tracing = {};
     context.tracing.tracer = tracer;
 
     return new Promise((pResolve, pReject) => {

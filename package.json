@@ -1,6 +1,6 @@
 {
   "name": "graphql-middleware-jaeger",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "GraphQL Jaeger tracing middleware based on OpenCensus",
   "main": "build/index.js",
   "repository": "https://github.com/BrunoScheufler/graphql-middleware-jaeger",
