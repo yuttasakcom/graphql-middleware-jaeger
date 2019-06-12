@@ -1,6 +1,6 @@
 {
   "name": "graphql-middleware-jaeger",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "description": "GraphQL Jaeger tracing middleware based on OpenCensus",
   "main": "build/index.js",
   "repository": "https://github.com/BrunoScheufler/graphql-middleware-jaeger",
@@ -8,21 +8,37 @@
   "license": "MIT",
   "private": false,
   "devDependencies": {
-    "@types/graphql": "14.0.5",
-    "@types/mocha": "5.2.5",
-    "@types/node": "10.12.18",
-    "tslint": "5.12.1",
-    "typescript": "3.2.4"
+    "@types/continuation-local-storage": "^3.2.1",
+    "@types/graphql": "14.2.0",
+    "@types/mocha": "5.2.7",
+    "@types/node": "12.0.8",
+    "prettier": "1.18.2",
+    "semantic-release": "15.13.12",
+    "tslint": "5.17.0",
+    "typescript": "3.5.1"
   },
   "dependencies": {
-    "@opencensus/core": "^0.0.14",
-    "@opencensus/exporter-jaeger": "^0.0.8",
-    "@opencensus/nodejs": "^0.0.8",
-    "graphql-middleware": "^3.0.0"
+    "@opencensus/core": "0.0.14",
+    "@opencensus/exporter-jaeger": "0.0.14",
+    "@opencensus/nodejs": "0.0.14",
+    "graphql-middleware": "3.0.2"
   },
   "scripts": {
     "build": "tsc --project .",
-    "lint": "tslint --project .",
-    "prepare": "yarn build && yarn lint"
+    "lint:style": "prettier --check src/**/*.ts",
+    "lint:code": "tslint --project .",
+    "lint": "yarn lint:style && yarn lint:code",
+    "watch": "tsc --project . --watch",
+    "prepare": "yarn build && yarn lint",
+    "test": "echo \"Currently, there are no tests, this placeholder was added so the current step won't fail.\"",
+    "semantic-release": "semantic-release"
+  },
+  "release": {
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ]
   }
 }
