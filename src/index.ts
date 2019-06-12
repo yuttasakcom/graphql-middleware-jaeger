@@ -37,6 +37,11 @@ const defaultOptions: IMiddlewareOptions = {
   }
 };
 
+/**
+ * @param hooks object of hooks
+ * @param name name of hook
+ * @param hookFnContext context (additional data)
+ */
 const runHook = async <T, D>(
   hooks: IMiddlewareHooks<T, D>,
   name: string,
@@ -53,6 +58,12 @@ const runHook = async <T, D>(
   }
 };
 
+/**
+ * @param config config for tracer
+ * @param options options for JaegerTraceExporter
+ * @param middlewareOptions options for middleware
+ * @param hooks object containing named hooks
+ */
 export const graphqlJaegerMiddleware: <T = any, D = any>(
   tracerConfig: Config,
   options: JaegerTraceExporterOptions,
