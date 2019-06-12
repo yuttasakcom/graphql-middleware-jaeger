@@ -1,5 +1,5 @@
 import tracing from '@opencensus/nodejs';
-import { Config, Span, TraceOptions } from '@opencensus/core';
+import { Config as TracerConfig, Span, TraceOptions } from '@opencensus/core';
 import { IMiddlewareFunction } from 'graphql-middleware';
 import { GraphQLResolveInfo } from 'graphql';
 import {
@@ -31,7 +31,13 @@ export interface IMiddlewareHooks<T, D> {
   [key: string]: Array<IMiddlewareHookFn<T, D>>;
 }
 
-const defaultOptions: IMiddlewareOptions = {
+export interface IOptions {
+  tracerConfig: TracerConfig;
+  exporterConfig: JaegerTraceExporterOptions;
+  middlewareOptions: IMiddlewareOptions;
+}
+
+export const defaultOptions: IMiddlewareOptions = {
   rootSpanOptions: {
     name: 'graphqlRequest'
   }
@@ -65,14 +71,15 @@ const runHook = async <T, D>(
  * @param hooks object containing named hooks
  */
 export const graphqlJaegerMiddleware: <T = any, D = any>(
-  tracerConfig: Config,
-  options: JaegerTraceExporterOptions,
-  middlewareOptions: IMiddlewareOptions,
+  options: IOptions,
   hooks: IMiddlewareHooks<T, D>
-) => IMiddlewareFunction = (config, options, middlewareOptions, hooks = {}) => {
+) => IMiddlewareFunction = (
+  { tracerConfig, exporterConfig, middlewareOptions },
+  hooks = {}
+) => {
   // Create tracer and register Jaeger instance
-  const { tracer } = tracing.start(config);
-  tracer.registerSpanEventListener(new JaegerTraceExporter(options));
+  const { tracer } = tracing.start(tracerConfig);
+  tracer.registerSpanEventListener(new JaegerTraceExporter(exporterConfig));
 
   // Return middleware
   return (resolve, parent, args, context, info) => {
