@@ -1,5 +1,7 @@
 # graphql-middleware-jaeger
 
+[![CircleCI](https://circleci.com/gh/BrunoScheufler/graphql-middleware-jaeger.svg?style=svg)](https://circleci.com/gh/BrunoScheufler/graphql-middleware-jaeger)
+
 > The easiest way to add tracing support to your GraphQL service
 
 Based on the [OpenCensus](https://opencensus.io/) project, this minimal library provides an easy solution to add basic tracing to your services. Recorded traces are exported to a supplied [Jaeger](https://www.jaegertracing.io/) instance automatically.
