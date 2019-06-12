@@ -1,40 +1,46 @@
 import tracing from '@opencensus/nodejs';
 import { Config, Span, TraceOptions } from '@opencensus/core';
 import { IMiddlewareFunction } from 'graphql-middleware';
+import { GraphQLResolveInfo } from 'graphql';
 import {
   JaegerTraceExporter,
   JaegerTraceExporterOptions
 } from '@opencensus/exporter-jaeger';
 
 export interface IMiddlewareOptions {
-  rootSpanOptions?: TraceOptions;
+  rootSpanOptions: TraceOptions;
 }
 
-export interface IHookFnContext<T> {
+export interface IHookFnContext<T, D> {
   context: T;
   rootSpan: Span;
-  data?: any;
+  data: {
+    resolvedData?: D;
+    args: any;
+    parent: any;
+    info: GraphQLResolveInfo;
+  };
   err?: Error;
 }
 
-export type IMiddlewareHookFn<T> = (
-  hookContext: IHookFnContext<T>
+export type IMiddlewareHookFn<T, D> = (
+  hookContext: IHookFnContext<T, D>
 ) => void | Promise<void>;
 
-export interface IMiddlewareHooks<T> {
-  [key: string]: Array<IMiddlewareHookFn<T>>;
+export interface IMiddlewareHooks<T, D> {
+  [key: string]: Array<IMiddlewareHookFn<T, D>>;
 }
 
-const defaultOptions = {
+const defaultOptions: IMiddlewareOptions = {
   rootSpanOptions: {
     name: 'graphqlRequest'
   }
 };
 
-const runHook = async <T>(
-  hooks: IMiddlewareHooks<T>,
+const runHook = async <T, D>(
+  hooks: IMiddlewareHooks<T, D>,
   name: string,
-  hookFnContext: IHookFnContext<T>
+  hookFnContext: IHookFnContext<T, D>
 ) => {
   const hook = hooks[name];
 
@@ -47,11 +53,11 @@ const runHook = async <T>(
   }
 };
 
-export const graphqlJaegerMiddleware: <T = any>(
+export const graphqlJaegerMiddleware: <T = any, D = any>(
   tracerConfig: Config,
   options: JaegerTraceExporterOptions,
   middlewareOptions: IMiddlewareOptions,
-  hooks: IMiddlewareHooks<T>
+  hooks: IMiddlewareHooks<T, D>
 ) => IMiddlewareFunction = (config, options, middlewareOptions, hooks = {}) => {
   // Create tracer and register Jaeger instance
   const { tracer } = tracing.start(config);
@@ -71,7 +77,11 @@ export const graphqlJaegerMiddleware: <T = any>(
           context.tracing.rootSpan = span;
 
           // Execute hooks
-          await runHook(hooks, 'preResolve', { rootSpan: span, context });
+          await runHook(hooks, 'preResolve', {
+            rootSpan: span,
+            context,
+            data: { parent, args, info }
+          });
 
           // Execute resolver and record root span
           try {
@@ -81,7 +91,7 @@ export const graphqlJaegerMiddleware: <T = any>(
             // Execute hooks
             await runHook(hooks, 'postResolve', {
               rootSpan: span,
-              data,
+              data: { resolvedData: data, parent, args, info },
               context
             });
 
@@ -92,7 +102,8 @@ export const graphqlJaegerMiddleware: <T = any>(
             await runHook(hooks, 'resolveError', {
               rootSpan: span,
               err,
-              context
+              context,
+              data: { parent, args, info }
             });
 
             span.end();
