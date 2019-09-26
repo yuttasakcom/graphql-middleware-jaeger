@@ -21,7 +21,7 @@
     "@opencensus/core": "0.0.17",
     "@opencensus/exporter-jaeger": "0.0.17",
     "@opencensus/nodejs": "0.0.17",
-    "graphql-middleware": "3.0.5"
+    "graphql-middleware": "4.0.1"
   },
   "scripts": {
     "build": "tsc --project .",
